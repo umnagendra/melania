@@ -57,3 +57,5 @@ typings/
 # dotenv environment variables file
 .env
 
+# The irritating thing that gets created every time you open any file in OS X
+.DS_Store
