@@ -5,6 +5,7 @@ const bodyParser    = require('body-parser');
 const httpLogger    = require('morgan');
 const _             = require('lodash');
 const logger        = require('./util/logger');
+const indexRoute    = require('./routes/index');
 
 logger.info("**** STARTUP ****");
 logger.debug("Environment = ", process.env);
@@ -19,7 +20,10 @@ app.use(bodyParser.json());
 app.use(httpLogger('short'));
 app.use(health.ping());
 
+// setup routes
+app.use('/', indexRoute);
+
 // Start the web service
 app.listen(process.env.PORT, () => {
-    logger.info("Babu listening on port %d", process.env.PORT);
+    logger.info("Service listening on port %d ...", process.env.PORT);
 });
