@@ -1,6 +1,6 @@
 'use strict';
 const botly       = require('botly');
-const logger      = require('winston');
+const logger      = require('../util/logger');
 const _           = require('lodash');
 
 // validate environment
