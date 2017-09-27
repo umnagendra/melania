@@ -1,0 +1,35 @@
+{
+    "name": "babu",
+    "description": "Facebook Messenger integration with Cisco SocialMiner",
+    "version": "0.0.1",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/umnagendra/babu"
+    },
+    "author": {
+        "name": "Nagendra Mahesh",
+        "email": "umnagendra@gmail.com",
+        "url": "http://nagendra.xyz"
+    },
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/umnagendra/babu/issues"
+    },
+    "homepage": "https://github.com/umnagendra/babu#readme",
+    "readme": "https://github.com/umnagendra/babu#readme",
+    "engines": {
+        "node": "6.11.3"
+    },
+    "dependencies": {
+        "body-parser": "^1.18.2",
+        "express": "^4.15.5",
+        "express-ping": "^1.4.0",
+        "lodash": "^4.17.4",
+        "morgan": "^1.9.0",
+        "winston": "^2.3.1"
+    }
+}
