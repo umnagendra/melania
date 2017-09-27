@@ -22,7 +22,8 @@
     "homepage": "https://github.com/umnagendra/melania#readme",
     "readme": "https://github.com/umnagendra/melania#readme",
     "engines": {
-        "node": "6.11.3"
+        "node": "6.11.3",
+        "npm": "5.4.2"
     },
     "dependencies": {
         "body-parser": "^1.18.2",
