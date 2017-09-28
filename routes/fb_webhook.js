@@ -1,6 +1,7 @@
 'use strict';
 const botly             = require('botly');
 const _                 = require('lodash');
+const util              = require('util');
 const logger            = require('../util/logger');
 const utils             = require('../util/utils');
 const sessionManager    = require('../session/session_manager');
