@@ -1,4 +1,5 @@
 'use strict';
+var request         = require('request-promise-native');
 const STATES        = require('../resources/states');
 
 module.exports = (user) => {
@@ -14,8 +15,9 @@ module.exports = (user) => {
 
         socialminer: {
             scRefURL: null,
-            latestEventID: null,
-            eventPoller: null
+            latestEventID: 0,
+            eventPoller: null,
+            cookieJar: request.jar(),
         }
     }
 };

@@ -1,3 +1,5 @@
 {
-    "GREETING"      : "Hello %s! Thanks for contacting us. I am %s. How may I help you today?"
+    "GREETING"                  : "Hello %s! Thanks for contacting us. I am %s. How may I help you today?",
+    "PLEASE_WAIT_FOR_AGENT"     : "Ah, alright. Let me go find you someone who can help you out. Please wait.",
+    "CHAT_FAILURE_TRY_LATER"    : "Yikes! Something bad just happened. We are unable to help you right now. Please try again after some time."
 }

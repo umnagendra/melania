@@ -19,14 +19,31 @@ const SessionManager = {
     },
 
     getSession: (id) => {
-        // returns a deep-copy of the session
-        // because we don't want anyone to inadvertently
-        // modify the session on their own
-        return Object.assign({}, sessionMap.get(id));
+        return sessionMap.get(id);
+    },
+
+    setState: (id, state) => {
+        sessionMap.get(id).state = state;
+    },
+
+    setSCRefURL: (id, url) => {
+        sessionMap.get(id).socialminer.scRefURL = url;
+    },
+
+    setLatestEventId: (id, eventId) => {
+        sessionMap.get(id).socialminer.latestEventID = eventId;
+    },
+
+    setEventPoller: (id, poller) => {
+        sessionMap.get(id).socialminer.eventPoller = poller;
     },
 
     addToCustomerMessageBuffer: (id, text) => {
         sessionMap.get(id).customerMessagesBuffer.push(text);
+    },
+
+    destroySession: (id) => {
+        sessionMap.delete(id);
     }
 };
 
