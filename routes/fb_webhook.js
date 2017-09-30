@@ -98,7 +98,7 @@ const _startChat = (senderId) => {
             // start polling for chat events
             let poller = setInterval(_getLatestChatEvents.bind(senderId), EVENT_POLLING_INTERVAL_MS);
             // update poller ref in session so it can be stopped later
-            sessionManager.setEventPoller(poller);
+            sessionManager.setEventPoller(senderId, poller);
         })
         .catch((err) => {
             utils.logErrorWithStackTrace(err);
