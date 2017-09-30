@@ -32,8 +32,6 @@ fbmBot.on("message", (senderId, message, data) => {
             sessionManager.createSession(sender);
             // STEP 2: Welcome/greet the user
             _welcomeUser(senderId);
-            // STEP 3: Also add this message into the incoming buffer
-            sessionManager.addToCustomerMessageBuffer(senderId, message.message.text);
         }).catch((err) => utils.logErrorWithStackTrace(err));
     }
 });
