@@ -10,8 +10,8 @@ const socialminer       = require('../util/socialminer_rest_util');
 const MESSAGES          = require('../resources/messages');
 const STATES            = require('../resources/states');
 
-// poll for chat events from SocialMiner every 3 seconds
-const EVENT_POLLING_INTERVAL_MS = 3000;
+// poll for chat events from SocialMiner every 4 seconds
+const EVENT_POLLING_INTERVAL_MS = 4000;
 
 const fbmBot = new botly({
     accessToken: _.trim(process.env.FB_PAGE_ACCESS_TOKEN),
@@ -115,14 +115,14 @@ const _getLatestChatEvents = (senderId) => {
             // parse the XML response
             xml2js.parseString(response, (err, result) => {
                 logger.debug('Received chat events', result);
-                if (!err && result && result.MessageEvent) {
+                if (!err && result.chatEvents && result.chatEvents.MessageEvent) {
                     let thisSession = sessionManager.getSession(senderId);
                     // we have a message, which means agent has joined
                     if (thisSession.state === STATES.WAITING) {
                         // move state to TALKING
                         sessionManager.setState(STATES.TALKING);
                     }
-                    _processMessagesFromSocialMiner(senderId, result.MessageEvent);
+                    _processMessagesFromSocialMiner(senderId, result.chatEvents.MessageEvent);
                 } else if (err) {
                     utils.logErrorWithStackTrace(err);
                 }
@@ -135,7 +135,7 @@ const _processMessagesFromSocialMiner = (senderId, messages) => {
     if (_.isArray(messages)) {
         _.each(messages, (message) => {
             // send each message to customer
-            fbmBot.sendText({id: senderId, text: message.body});
+            fbmBot.sendText({id: senderId, text: utils.decodeString(message.body)});
             // update the latest event ID
             sessionManager.setLatestEventId(parseInt(message.id));
         });

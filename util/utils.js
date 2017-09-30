@@ -24,5 +24,18 @@ module.exports = {
 
     logErrorWithStackTrace: (err, msg) => {
         logger.error("Something went wrong.", err, new Error(msg).stack);
+    },
+
+    /**
+     * Properly decode a URLEncoded string
+     *
+     * @param str the string to be decoded
+     * @returns the decoded string
+     */
+    decodeString: (str) => {
+        str = decodeURIComponent(str.replace(/\+/g,  " "));
+        str = str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;').replace(/\'/g,'&#x27;').replace(/\//g,'&#x2f;');
+
+        return str;
     }
 };
