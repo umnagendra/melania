@@ -94,9 +94,9 @@ const _startChat = (senderId) => {
     // create chat in SocialMiner
     socialminer.postChatRequest(senderId)
         .then((response) => {
-            logger.info('Chat created successfully. Response = ', response);
+            logger.info('Chat created successfully. Status = [%d] ', response.statusCode, response.headers);
             // start polling for chat events
-            let poller = setInterval(_getLatestChatEvents.bind(senderId), EVENT_POLLING_INTERVAL_MS);
+            let poller = setInterval(_getLatestChatEvents, EVENT_POLLING_INTERVAL_MS, senderId);
             // update poller ref in session so it can be stopped later
             sessionManager.setEventPoller(senderId, poller);
         })
@@ -114,7 +114,7 @@ const _getLatestChatEvents = (senderId) => {
         .then((response) => {
             // parse the XML response
             xml2js.parseString(response, (err, result) => {
-                logger.log('Received chat events', result);
+                logger.debug('Received chat events', result);
                 if (!err && result && result.MessageEvent) {
                     let thisSession = sessionManager.getSession(senderId);
                     // we have a message, which means agent has joined
