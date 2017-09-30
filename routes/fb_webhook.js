@@ -24,7 +24,7 @@ fbmBot.on("message", (senderId, message, data) => {
 
     // are we already in an ongoing session with this sender?
     if (sessionManager.isSessionOngoing(senderId)) {
-        _handleMessageInConversation(senderId, message.text);
+        _handleMessageInConversation(senderId, message.message.text);
     } else {
         // STEP 0: Get user details from Facebook
         _getUserProfile(senderId).then((sender) => {
@@ -33,7 +33,7 @@ fbmBot.on("message", (senderId, message, data) => {
             // STEP 2: Welcome/greet the user
             _welcomeUser(senderId);
             // STEP 3: Also add this message into the incoming buffer
-            sessionManager.addToCustomerMessageBuffer(senderId, message.text);
+            sessionManager.addToCustomerMessageBuffer(senderId, message.message.text);
         }).catch((err) => utils.logErrorWithStackTrace(err));
     }
 });
@@ -115,7 +115,7 @@ const _getLatestChatEvents = (senderId) => {
     socialminer.getLatestChatEvents(senderId)
         .then((response) => {
             // parse the XML response
-            xml2js.parseString(response, (err, result) => {
+            xml2js.parseString(response, {explicitArray: false}, (err, result) => {
                 logger.debug('Received chat events', result);
 
                 // as soon as an agent joins, push him the messages
