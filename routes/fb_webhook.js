@@ -129,7 +129,8 @@ const _getLatestChatEvents = (senderId) => {
                         if (thisSession.state === STATES.WAITING) {
                             // move state to TALKING
                             sessionManager.setState(senderId, STATES.TALKING);
-                            _.each(thisSession.customerMessagesBuffer, (message) => socialminer.putChatMessage(senderId, message));
+                            // start flushing from the head of the buffer stack
+                            _.each(_.reverse(thisSession.customerMessagesBuffer), (message) => socialminer.putChatMessage(senderId, message));
                         }
                     }
                 }
@@ -158,7 +159,7 @@ const _processMessagesFromSocialMiner = (senderId, messages) => {
         });
     } else {
         // send the message to customer
-        fbmBot.sendText({id: senderId, text: messages.body});
+        fbmBot.sendText({id: senderId, text: utils.decodeString(messages.body)});
         // update the latest event ID
         sessionManager.setLatestEventId(senderId, parseInt(messages.id));
     }
