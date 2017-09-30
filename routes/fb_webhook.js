@@ -2,12 +2,16 @@
 const botly             = require('botly');
 const _                 = require('lodash');
 const util              = require('util');
+const xml2js            = require('xml2js');
 const logger            = require('../util/logger');
 const utils             = require('../util/utils');
 const sessionManager    = require('../session/session_manager');
 const socialminer       = require('../util/socialminer_rest_util');
 const MESSAGES          = require('../resources/messages');
 const STATES            = require('../resources/states');
+
+// poll for chat events from SocialMiner every 3 seconds
+const EVENT_POLLING_INTERVAL_MS = 3000;
 
 const fbmBot = new botly({
     accessToken: _.trim(process.env.FB_PAGE_ACCESS_TOKEN),
@@ -91,7 +95,10 @@ const _startChat = (senderId) => {
     socialminer.postChatRequest(senderId)
         .then((response) => {
             logger.info('Chat created successfully. Response = ', response);
-            // TODO start polling for chat events, update poller ref in session
+            // start polling for chat events
+            let poller = setInterval(_getLatestChatEvents.bind(senderId), EVENT_POLLING_INTERVAL_MS);
+            // update poller ref in session so it can be stopped later
+            sessionManager.setEventPoller(poller);
         })
         .catch((err) => {
             utils.logErrorWithStackTrace(err);
@@ -100,4 +107,42 @@ const _startChat = (senderId) => {
             // cleanup the session, it is no longer needed
             sessionManager.destroySession(senderId);
         });
-}
+};
+
+const _getLatestChatEvents = (senderId) => {
+    socialminer.getLatestChatEvents(senderId)
+        .then((response) => {
+            // parse the XML response
+            xml2js.parseString(response, (err, result) => {
+                logger.log('Received chat events', result);
+                if (!err && result && result.MessageEvent) {
+                    let thisSession = sessionManager.getSession(senderId);
+                    // we have a message, which means agent has joined
+                    if (thisSession.state === STATES.WAITING) {
+                        // move state to TALKING
+                        sessionManager.setState(STATES.TALKING);
+                    }
+                    _processMessagesFromSocialMiner(senderId, result.MessageEvent);
+                } else if (err) {
+                    utils.logErrorWithStackTrace(err);
+                }
+            });
+        })
+        .catch((err) => utils.logErrorWithStackTrace(err));
+};
+
+const _processMessagesFromSocialMiner = (senderId, messages) => {
+    if (_.isArray(messages)) {
+        _.each(messages, (message) => {
+            // send each message to customer
+            fbmBot.sendText({id: senderId, text: message.body});
+            // update the latest event ID
+            sessionManager.setLatestEventId(parseInt(message.id));
+        });
+    } else {
+        // send the message to customer
+        fbmBot.sendText({id: senderId, text: messages.body});
+        // update the latest event ID
+        sessionManager.setLatestEventId(parseInt(messages.id));
+    }
+};
