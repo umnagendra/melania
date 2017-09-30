@@ -67,7 +67,9 @@ const _handleMessageInConversation = (senderId, text) => {
             break;
 
         case STATES.TALKING:
-            // TODO just take the msg and send to socialminer
+            // just take the msg and send to socialminer
+            socialminer.putChatMessage(senderId, text);
+            break;
 
         default:
             // just add this msg into incoming buffer
@@ -115,15 +117,30 @@ const _getLatestChatEvents = (senderId) => {
             // parse the XML response
             xml2js.parseString(response, (err, result) => {
                 logger.debug('Received chat events', result);
-                if (!err && result.chatEvents && result.chatEvents.MessageEvent) {
-                    let thisSession = sessionManager.getSession(senderId);
-                    // we have a message, which means agent has joined
-                    if (thisSession.state === STATES.WAITING) {
-                        // move state to TALKING
-                        sessionManager.setState(STATES.TALKING);
+
+                // as soon as an agent joins, push him the messages
+                // held in customer msg buffer (inside the session)
+                if (!err && result.chatEvents.PresenceEvent) {
+                    if (result.chatEvents.PresenceEvent[0].status == 'joined') {
+                        logger.info('Session [ID=%s] - Agent [%s] has joined the chat',
+                                    senderId, result.chatEvents.PresenceEvent[0].from);
+                        let thisSession = sessionManager.getSession(senderId);
+                        // the session is now in TALKING state
+                        if (thisSession.state === STATES.WAITING) {
+                            // move state to TALKING
+                            sessionManager.setState(senderId, STATES.TALKING);
+                            _.each(thisSession.customerMessagesBuffer, (message) => socialminer.putChatMessage(senderId, message));
+                        }
                     }
+                }
+
+                // process any message events
+                if (!err && result.chatEvents && result.chatEvents.MessageEvent) {
                     _processMessagesFromSocialMiner(senderId, result.chatEvents.MessageEvent);
-                } else if (err) {
+                }
+
+                // if any error in GETting events, just log it and try again
+                if (err) {
                     utils.logErrorWithStackTrace(err);
                 }
             });
@@ -137,12 +154,12 @@ const _processMessagesFromSocialMiner = (senderId, messages) => {
             // send each message to customer
             fbmBot.sendText({id: senderId, text: utils.decodeString(message.body)});
             // update the latest event ID
-            sessionManager.setLatestEventId(parseInt(message.id));
+            sessionManager.setLatestEventId(senderId, parseInt(message.id));
         });
     } else {
         // send the message to customer
         fbmBot.sendText({id: senderId, text: messages.body});
         // update the latest event ID
-        sessionManager.setLatestEventId(parseInt(messages.id));
+        sessionManager.setLatestEventId(senderId, parseInt(messages.id));
     }
 };

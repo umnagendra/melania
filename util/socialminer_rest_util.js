@@ -48,6 +48,21 @@ const SocialMinerRESTClient = {
 
         logger.debug('GET: chat events', options);
         return request(options);
+    },
+
+    putChatMessage: (sessionId, text) => {
+        let options = {
+            url: util.format(CHAT_URL, process.env.SOCIALMINER_HOST),
+            method: 'PUT',
+            headers: {
+                'Content-Type': MIME_XML
+            },
+            body: _constructMessagePayload(text),
+            jar: sessionManager.getSession(sessionId).socialminer.cookieJar
+        };
+
+        logger.debug('PUT: chat message', options);
+        return request(options);
     }
 };
 
