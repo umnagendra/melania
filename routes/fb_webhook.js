@@ -121,9 +121,9 @@ const _getLatestChatEvents = (senderId) => {
                 // as soon as an agent joins, push him the messages
                 // held in customer msg buffer (inside the session)
                 if (!err && result.chatEvents.PresenceEvent) {
-                    if (result.chatEvents.PresenceEvent[0].status == 'joined') {
+                    if (result.chatEvents.PresenceEvent.status == 'joined') {
                         logger.info('Session [ID=%s] - Agent [%s] has joined the chat',
-                                    senderId, result.chatEvents.PresenceEvent[0].from);
+                                    senderId, result.chatEvents.PresenceEvent.from);
                         let thisSession = sessionManager.getSession(senderId);
                         // the session is now in TALKING state
                         if (thisSession.state === STATES.WAITING) {
