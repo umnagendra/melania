@@ -227,7 +227,7 @@ const _processPresenceFromSocialMiner = (senderId, PresenceEvent) => {
 
         case 'left':
             logger.info('Session [ID=%s] - Agent [%s] has left the chat',
-                        senderId, result.chatEvents.PresenceEvent.from);
+                        senderId, PresenceEvent.from);
             _handleAgentLeft(senderId);
             break;
     }
