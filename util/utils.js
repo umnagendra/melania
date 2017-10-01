@@ -13,6 +13,11 @@ const MANDATORY_ENV_VARS = [
 ];
 
 module.exports = {
+    /**
+     * Validates the deployed environment to ensure
+     * all required variables are defined. If not, it
+     * aborts the entire application.
+     */
     validateEnvironment: () => {
         _.each(MANDATORY_ENV_VARS, (variable) => {
             if (_.isUndefined(process.env[variable]) ||
@@ -22,6 +27,12 @@ module.exports = {
         });
     },
 
+    /**
+     * Logs an error with its stack trace
+     * 
+     * @param {*} err
+     * @param {String} msg
+     */
     logErrorWithStackTrace: (err, msg) => {
         logger.error("Something went wrong.", err, new Error(msg).stack);
     },
@@ -29,8 +40,7 @@ module.exports = {
     /**
      * Properly decode a URLEncoded string
      *
-     * @param str the string to be decoded
-     * @returns the decoded string
+     * @param {String} str
      */
     decodeString: (str) => {
         str = decodeURIComponent(str.replace(/\+/g,  " "));

@@ -3,9 +3,17 @@ const Session           = require('./session');
 const STATES            = require('../resources/states');
 const logger            = require('../util/logger');
 
-// Map <sender ID, session>
+/**
+ * `Map <sender ID, session>`
+ * 
+ * holds all sessions that are ongoing
+ */ 
 const sessionMap = new Map();
 
+/**
+ * Exposes an interface for the rest of the
+ * application to create, update and destroy sessions
+ */
 const SessionManager = {
     isSessionOngoing: (id) => {
         return sessionMap.has(id) &&
@@ -43,6 +51,11 @@ const SessionManager = {
     },
 
     destroySession: (id) => {
+        // clear interval if it exists
+        if (sessionMap.get(id) && sessionMap.get(id).socialminer.eventPoller) {
+            clearInterval(sessionMap.get(id).socialminer.eventPoller);
+        }
+        // then, remove the session from sessionMap
         sessionMap.delete(id);
     }
 };
