@@ -7,10 +7,6 @@ _Facebook Messenger integration with Cisco Unified CCX Web Chat (via Cisco Socia
 [![Code Climate](https://codeclimate.com/github/umnagendra/melania/badges/gpa.svg)](https://codeclimate.com/github/umnagendra/melania)
 [![Issue Count](https://codeclimate.com/github/umnagendra/melania/badges/issue_count.svg)](https://codeclimate.com/github/umnagendra/melania)
 
-[![License](https://img.shields.io/github/license/umnagendra/melania.svg)](https://github.com/umnagendra/melania/blob/master/LICENSE)
-[![HitCount](http://hits.dwyl.com/umnagendra/melania.svg)](http://hits.dwyl.com/umnagendra/melania)
-![Heroku](http://heroku-badge.herokuapp.com/?app=ccbu-melania&style=flat&svg=1)
-
 <img src="https://user-images.githubusercontent.com/990210/31052289-36b1dee2-a69e-11e7-985b-0d9266877f50.png" width="425"/>  <img src="https://user-images.githubusercontent.com/990210/31052292-41b8c5d0-a69e-11e7-8ab3-a55d23a33c75.png" width="425"/>
 
 # Built With
@@ -53,13 +49,13 @@ The following environment variables are required to be defined (in `process.env`
 
 |Variable|Description|
 |--------|-----------|
-|PORT    |A 16-bit UNIX port number where this app will bind to|
-|FB_PAGE_ACCESS_TOKEN|The page access token issued by Facebook when you configure messenger for a page|
-|FB_VERIFICATION_TOKEN|A token that is to be provided by your app when Facebook challenges the validity of your webhook URL|
-|VIRTUAL_ASSISTANT_NAME|The name of your virtual assistant (E.g. _Siri_, _Alexa_ etc.)|
-|SOCIALMINER_HOST|A valid fully qualified hostname of your SocialMiner server|
-|SOCIALMINER_CHAT_FEED_ID|The ID of the chat feed in SocialMiner. Can be obtained by calling the `/feed` API on SocialMiner|
-|CCX_QUEUE_ID|The ID of the CCX Chat Contact Service Queue. Can be obtained by calling the `/csq/` API on CCX|
+|__PORT__    |A 16-bit UNIX port number where this app will bind to|
+|__FB_PAGE_ACCESS_TOKEN__|The page access token issued by Facebook when you configure messenger for a page|
+|__FB_VERIFICATION_TOKEN__|A token that is to be provided by your app when Facebook challenges the validity of your webhook URL|
+|__VIRTUAL_ASSISTANT_NAME__|The name of your virtual assistant (E.g. _Siri_, _Alexa_ etc.)|
+|__SOCIALMINER_HOST__|A valid fully qualified hostname of your SocialMiner server|
+|__SOCIALMINER_CHAT_FEED_ID__|The ID of the chat feed in SocialMiner. Can be obtained by calling the `/feed` API on SocialMiner|
+|__CCX_QUEUE_ID__|The ID of the CCX Chat Contact Service Queue. Can be obtained by calling the `/csq/` API on CCX|
 
 # Licenses
 ### MIT License
