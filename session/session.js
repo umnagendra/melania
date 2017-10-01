@@ -24,5 +24,5 @@ module.exports = (user) => {
             eventPoller: null,
             cookieJar: request.jar() // IMPORTANT! Maintains chat client HTTP session
         }
-    }
+    };
 };
