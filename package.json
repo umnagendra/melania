@@ -1,6 +1,6 @@
 {
     "name": "melania",
-    "description": "Facebook Messenger integration with Cisco SocialMiner",
+    "description": "Facebook Messenger integration with Cisco Unified CCX Web Chat (via Cisco SocialMiner)",
     "version": "0.0.1",
     "main": "app.js",
     "scripts": {
