@@ -1,0 +1,154 @@
+@startuml
+!pragma teoz true
+skinparam handwritten true
+
+title <size:18><color blue>__Facebook Messenger Integration__</color></size>\nwith Cisco Unified CCX Web Chat (//via Cisco SocialMiner//)
+
+actor customer as "<size:18>**Chat Customer**</size>\n//(on FB Messenger)//"
+participant facebook as "<size:18><color blue>**Facebook**</color></size>\n☁"
+participant melania as "<size:18><color red>**//Melania//**</color></size>\n(Hosted somewhere on the ☁)"
+box "DMZ" #LightBlue
+    participant socialminer as "<size:18><color green>**SocialMiner**</color></size>"
+end box
+box "Enterprise"
+    participant ccx as "<size:18><color brown>**Unified CCX**</color></size>"
+    actor agent as "<size:18>**Chat Agent**</size>\n//(on Finesse Desktop)//"
+end box
+
+group Registration
+    melania -> facebook : Register Webhook\nfor messages
+    facebook -> melania : Validate Webhook
+end
+
+... ...
+== Customer visits facebook page\nwants to start messaging with the business on FB Messenger ==
+
+customer -> facebook : **"""Hi!"""**
+rnote right of customer
+    Looks up FB page,
+    sends a msg
+end rnote
+facebook -> melania : Invoke webhook
+rnote right of facebook
+    New incoming message
+    **"""{JSON}"""**
+end rnote
+
+melania -> facebook : Send welcome msg
+rnote left of melania
+    **"""Hello!"""**
+    **"""How may I help you?"""**
+end rnote
+
+facebook -> customer : New message
+rnote left of facebook
+    **"""Hello!"""**
+    **"""How may I help you?"""**
+end rnote
+customer -> facebook : **"""I have XYZ problem"""**
+facebook -> melania : Invoke webhook
+rnote right of facebook
+    New incoming message
+    **"""{JSON}"""**
+end rnote
+
+melania --> melania : CREATE SESSION
+activate melania #FFBBBB
+    melania -> facebook : Send wait msg
+    rnote left of melania
+        **"""Please wait."""**
+        **"""Will find an agent"""**
+    end rnote
+    facebook -> customer : New message
+    rnote left of facebook
+        **"""Please wait."""**
+        **"""Will find an agent"""**
+    end rnote
+
+    melania -> socialminer : Create new chat request
+    rnote right of melania
+        **""HTTP POST /ccp/chat""**
+        ""<SocialContact>""
+        ""  ..""
+        ""</SocialContact>""
+    end rnote
+    socialminer -> ccx : Queue chat contact
+    ccx -> agent : Allocate and offer chat contact
+    agent --> ccx : Accept chat contact
+    agent --> socialminer : Join chat session
+
+    == Agent joins and starts chatting with customer ==
+
+    agent --> socialminer : Start chatting with customer
+    rnote left of agent
+        **"""Hello customer!"""**
+    end rnote
+
+    melania -> socialminer : GET chat events
+    rnote right of melania
+        **""HTTP GET /ccp/chat""**
+    end rnote
+    socialminer --> melania : [Response] Chat Events
+    rnote left of socialminer
+        ""<chatEvents>""
+        ""  ..""
+        ""</chatEvents>""
+    end rnote
+
+    melania --> melania : Process chat events
+    melania -> facebook : Send msg from agent
+        rnote left of melania
+            **"""Hello customer!"""**
+        end rnote
+        facebook -> customer : New message
+        rnote left of facebook
+            **"""Hello customer!"""**
+        end rnote
+
+    customer -> facebook : **"""blah blah"""**
+    facebook -> melania : Invoke webhook
+    rnote right of facebook
+        New incoming message
+        **"""{JSON}"""**
+    end rnote
+    melania -> socialminer : Send chat message
+    rnote right of melania
+        **""HTTP PUT /ccp/chat""**
+        ""<Message>blah blah</Message>""
+    end rnote
+    socialminer -> agent : Message from customer
+    rnote right of socialminer
+        **"""blah blah"""**
+    end rnote
+
+    == Customer and agent continue talking to each other ==
+
+    ... ...
+
+    agent -> socialminer : End Chat
+    melania -> socialminer : GET chat events
+        rnote right of melania
+            **""HTTP GET /ccp/chat""**
+        end rnote
+        socialminer --> melania : [Response] Chat Events
+        rnote left of socialminer
+            ""<chatEvents>""
+            ""  ..""
+            ""</chatEvents>""
+        end rnote
+
+        melania --> melania : Process session END
+        melania -> facebook : Send goodbye msg
+        rnote left of melania
+            **"""Chat has ended. Thank you."""**
+        end rnote
+
+melania --> melania : Destroy session
+deactivate melania
+
+facebook -> customer : New message
+rnote left of facebook
+    **"""Chat has ended. Thank you."""**
+end rnote
+
+@enduml
