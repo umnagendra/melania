@@ -130,6 +130,26 @@ const _getLatestChatEvents = (senderId) => {
                             // start flushing from the head of the buffer stack
                             _.each(_.reverse(thisSession.customerMessagesBuffer), (message) => socialminer.putChatMessage(senderId, message));
                         }
+                    } else if (result.chatEvents.PresenceEvent.status == 'left') {
+                        logger.info('Session [ID=%s] - Agent [%s] has left the chat',
+                        senderId, result.chatEvents.PresenceEvent.from);
+                        // inform the customer that agent has ended the chat
+                        // TODO - the "quick reply" option here is just used for
+                        //        illustration purposes only. When the FB user actually
+                        //        makes a selection, we will have to handle it here
+                        //        (and possibly keep the session alive until then)
+                        fbmBot.sendText({
+                            id: senderId,
+                            text: MESSAGES.CHAT_ENDED,
+                            quick_replies: [
+                                fbmBot.createQuickReply(MESSAGES.SURVEY_HIGH, 'high'),
+                                fbmBot.createQuickReply(MESSAGES.SURVEY_MEDIUM, 'medium'),
+                                fbmBot.createQuickReply(MESSAGES.SURVEY_LOW, 'low')
+                            ]
+                        });
+                        // end the session
+                        sessionManager.destroySession(senderId);
+                        logger.info("Session [ID=%s] is ended.", senderId);
                     }
                 }
 
