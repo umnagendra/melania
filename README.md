@@ -1,5 +1,5 @@
 # Melania
-_Facebook Messenger integration with Cisco SocialMiner_
+_Facebook Messenger integration with Cisco Unified CCX Web Chat (via Cisco SocialMiner)_
 
 [![bitHound Overall Score](https://www.bithound.io/github/umnagendra/melania/badges/score.svg)](https://www.bithound.io/github/umnagendra/melania)
 [![bitHound Code](https://www.bithound.io/github/umnagendra/melania/badges/code.svg)](https://www.bithound.io/github/umnagendra/melania)
