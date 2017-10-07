@@ -19,6 +19,9 @@ _Facebook Messenger integration with Cisco Unified CCX Web Chat (via Cisco Socia
 - :blue_heart:
 
 # Design
+![image](https://user-images.githubusercontent.com/990210/31310965-dfed4cf0-abbf-11e7-90b2-0330d672e73f.png)
+
+## Flow
 ![image](https://user-images.githubusercontent.com/990210/31053563-e8cdaa42-a6bd-11e7-89c4-70e189031843.png)
 
 # Running
