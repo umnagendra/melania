@@ -1,5 +1,4 @@
-'use strict';
-const winston       = require('winston');
+const winston = require("winston");
 
 module.exports = new (winston.Logger)({
     transports: [
@@ -7,6 +6,7 @@ module.exports = new (winston.Logger)({
             level: process.env.DEBUG ? "debug" : "info",
             handleExceptions: true,
             colorize: true,
-            prettyPrint: true})
-    ]
+            prettyPrint: true,
+        }),
+    ],
 });

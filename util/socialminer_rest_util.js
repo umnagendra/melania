@@ -1,69 +1,69 @@
-'use strict';
-var request             = require('request-promise-native');
-var util                = require('util');
-const logger            = require('./logger');
-const sessionManager    = require('../session/session_manager');
+const request = require("request-promise-native");
+const util = require("util");
+const logger = require("./logger");
+const sessionManager = require("../session/session_manager");
 
 // constants
-const CHAT_TITLE                = 'Chat from Facebook Messenger';
-const CCX_QUEUETAG_PREFIX       = 'Chat_Csq';
-const CHAT_FEED_REFURL          = 'http://%s/ccp-webapp/ccp/feed/%s';
-const CHAT_URL                  = 'http://%s/ccp/chat';
-const CHAT_EVENTS_QUERY_PARAMS  = '?all=false&eventid=';
-const LOCATION_HEADER           = 'Location';
-const MIME_XML                  = 'application/xml';
+const CHAT_TITLE = "Chat from Facebook Messenger";
+const CCX_QUEUETAG_PREFIX = "Chat_Csq";
+const CHAT_FEED_REFURL = "http://%s/ccp-webapp/ccp/feed/%s";
+const CHAT_URL = "http://%s/ccp/chat";
+const CHAT_EVENTS_QUERY_PARAMS = "?all=false&eventid=";
+const MIME_XML = "application/xml";
 
 const SocialMinerRESTClient = {
     postChatRequest: (sessionId) => {
-        logger.info('Posting a chat request to SocialMiner [HOST=%s], [FEEDID=%s]',
-                    process.env.SOCIALMINER_HOST, process.env.SOCIALMINER_CHAT_FEED_ID);
+        logger.info(
+            "Posting a chat request to SocialMiner [HOST=%s], [FEEDID=%s]",
+            process.env.SOCIALMINER_HOST, process.env.SOCIALMINER_CHAT_FEED_ID
+        );
 
-        let options = {
+        const options = {
             url: util.format(CHAT_URL, process.env.SOCIALMINER_HOST),
-            method: 'POST',
+            method: "POST",
             headers: {
-                'Content-Type': MIME_XML
+                "Content-Type": MIME_XML,
             },
             body: _constructChatRequestPayload(sessionId),
             resolveWithFullResponse: true,
-            jar: sessionManager.getSession(sessionId).socialminer.cookieJar
+            jar: sessionManager.getSession(sessionId).socialminer.cookieJar,
         };
 
-        logger.debug('POST: new chat request', options);
+        logger.debug("POST: new chat request", options);
         return request(options);
     },
 
     getLatestChatEvents: (sessionId) => {
-        let thisSession = sessionManager.getSession(sessionId);
-        let latestEventId = thisSession.socialminer.latestEventID;
-        
-        let options = {
+        const thisSession = sessionManager.getSession(sessionId);
+        const latestEventId = thisSession.socialminer.latestEventID;
+
+        const options = {
             url: util.format(CHAT_URL, process.env.SOCIALMINER_HOST) + CHAT_EVENTS_QUERY_PARAMS + latestEventId,
-            method: 'GET',
+            method: "GET",
             headers: {
-                'Accept': MIME_XML
+                Accept: MIME_XML,
             },
-            jar: thisSession.socialminer.cookieJar
+            jar: thisSession.socialminer.cookieJar,
         };
 
-        logger.debug('GET: chat events', options);
+        logger.debug("GET: chat events", options);
         return request(options);
     },
 
     putChatMessage: (sessionId, text) => {
-        let options = {
+        const options = {
             url: util.format(CHAT_URL, process.env.SOCIALMINER_HOST),
-            method: 'PUT',
+            method: "PUT",
             headers: {
-                'Content-Type': MIME_XML
+                "Content-Type": MIME_XML,
             },
             body: _constructMessagePayload(text),
-            jar: sessionManager.getSession(sessionId).socialminer.cookieJar
+            jar: sessionManager.getSession(sessionId).socialminer.cookieJar,
         };
 
-        logger.debug('PUT: chat message', options);
+        logger.debug("PUT: chat message", options);
         return request(options);
-    }
+    },
 };
 
 module.exports = SocialMinerRESTClient;
@@ -71,29 +71,29 @@ module.exports = SocialMinerRESTClient;
 // private functions
 
 const _constructChatRequestPayload = (sessionId) => {
-    let feedRefURL = util.format(CHAT_FEED_REFURL,
-                     process.env.SOCIALMINER_HOST, process.env.SOCIALMINER_CHAT_FEED_ID);
-    let thisSession = sessionManager.getSession(sessionId);
+    const feedRefURL = util.format(
+        CHAT_FEED_REFURL,
+        process.env.SOCIALMINER_HOST, process.env.SOCIALMINER_CHAT_FEED_ID
+    );
+    const thisSession = sessionManager.getSession(sessionId);
 
-    return '<SocialContact>' +
-                '<feedRefURL>' + feedRefURL + '</feedRefURL>' +
-                '<author>' + thisSession.user.name  + '</author>' +
-                '<title>' + CHAT_TITLE  + '</title>' +
-                '<extensionFields>' +
-                    '<extensionField>' +
-                        '<name>ccxqueuetag</name>' +
-                        '<value>' + CCX_QUEUETAG_PREFIX + process.env.CCX_QUEUE_ID  + '</value>' +
-                    '</extensionField>' +
-                    '<extensionField>' +
-                        '<name>h_Name</name>' +
-                        '<value>' + thisSession.user.name + '</value>' +
-                    '</extensionField>' +
-                '</extensionFields>' +
-            '</SocialContact>';
+    return `${"<SocialContact>" +
+                "<feedRefURL>"}${feedRefURL}</feedRefURL>` +
+                `<author>${thisSession.user.name}</author>` +
+                `<title>${CHAT_TITLE}</title>` +
+                "<extensionFields>" +
+                    "<extensionField>" +
+                        "<name>ccxqueuetag</name>" +
+                        `<value>${CCX_QUEUETAG_PREFIX}${process.env.CCX_QUEUE_ID}</value>` +
+                    "</extensionField>" +
+                    "<extensionField>" +
+                        "<name>h_Name</name>" +
+                        `<value>${thisSession.user.name}</value>` +
+                    "</extensionField>" +
+                "</extensionFields>" +
+            "</SocialContact>";
 };
 
-const _constructMessagePayload = (text) => {
-    return '<Message>' +
-                '<body>' + text  + '</body>' +
-           '</Message>';
-};
+const _constructMessagePayload = text => `${"<Message>" +
+                "<body>"}${text}</body>` +
+           "</Message>";
