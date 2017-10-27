@@ -1,13 +1,12 @@
-'use strict';
-const Session           = require('./session');
-const STATES            = require('../resources/states');
-const logger            = require('../util/logger');
+const Session = require("./session");
+const STATES = require("../resources/states");
+const logger = require("../util/logger");
 
 /**
  * `Map <sender ID, session>`
- * 
+ *
  * holds all sessions that are ongoing
- */ 
+ */
 const sessionMap = new Map();
 
 /**
@@ -15,20 +14,16 @@ const sessionMap = new Map();
  * application to create, update and destroy sessions
  */
 const SessionManager = {
-    isSessionOngoing: (id) => {
-        return sessionMap.has(id) &&
+    isSessionOngoing: id => sessionMap.has(id) &&
             sessionMap.get(id).state !== STATES.STARTED &&
-            sessionMap.get(id).state !== STATES.ENDED;
-    },
+            sessionMap.get(id).state !== STATES.ENDED,
 
     createSession: (user) => {
-        logger.info('Creating new session for user', user);
+        logger.info("Creating new session for user", user);
         sessionMap.set(user.id, Session(user));
     },
 
-    getSession: (id) => {
-        return sessionMap.get(id);
-    },
+    getSession: id => sessionMap.get(id),
 
     setState: (id, state) => {
         sessionMap.get(id).state = state;
@@ -57,7 +52,7 @@ const SessionManager = {
         }
         // then, remove the session from sessionMap
         sessionMap.delete(id);
-    }
+    },
 };
 
 module.exports = SessionManager;

@@ -1,15 +1,14 @@
-'use strict';
-const _           = require('lodash');
-const logger      = require('../util/logger');
+const _ = require("lodash");
+const logger = require("../util/logger");
 
 const MANDATORY_ENV_VARS = [
-    'PORT',
-    'FB_PAGE_ACCESS_TOKEN',
-    'FB_VERIFICATION_TOKEN',
-    'VIRTUAL_ASSISTANT_NAME',
-    'SOCIALMINER_HOST',
-    'SOCIALMINER_CHAT_FEED_ID',
-    'CCX_QUEUE_ID'
+    "PORT",
+    "FB_PAGE_ACCESS_TOKEN",
+    "FB_VERIFICATION_TOKEN",
+    "VIRTUAL_ASSISTANT_NAME",
+    "SOCIALMINER_HOST",
+    "SOCIALMINER_CHAT_FEED_ID",
+    "CCX_QUEUE_ID",
 ];
 
 module.exports = {
@@ -22,14 +21,14 @@ module.exports = {
         _.each(MANDATORY_ENV_VARS, (variable) => {
             if (_.isUndefined(process.env[variable]) ||
                 _.isEmpty(_.trim(process.env[variable]))) {
-                throw new ReferenceError('SEVERE ERROR: MISSING/INVALID environment variable value: ' + variable);
+                throw new ReferenceError(`SEVERE ERROR: MISSING/INVALID environment variable value: ${variable}`);
             }
         });
     },
 
     /**
      * Logs an error with its stack trace
-     * 
+     *
      * @param {*} err
      * @param {String} msg
      */
@@ -43,9 +42,11 @@ module.exports = {
      * @param {String} str
      */
     decodeString: (str) => {
-        str = decodeURIComponent(str.replace(/\+/g,  " "));
-        str = str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;').replace(/\'/g,'&#x27;').replace(/\//g,'&#x2f;');
+        let decodedStr = decodeURIComponent(str.replace(/\+/g, " "));
+        decodedStr = decodedStr.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")
+            .replace(/'/g, "&#x27;")
+            .replace(/\//g, "&#x2f;");
 
-        return str;
-    }
+        return decodedStr;
+    },
 };
