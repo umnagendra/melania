@@ -39,6 +39,8 @@ fbmBot.on("message", (senderId, message) => {
             // STEP 1: Create a new session
             sessionManager.createSession(sender);
             // STEP 2: Welcome/greet the user
+            logger.info("trying to welcome user with senderID: ", senderId);
+            logger.info("maybe i should use sender.id instead?", sender.id);
             _welcomeUser(senderId);
         }).catch(err => utils.logErrorWithStackTrace(err));
     }
@@ -101,6 +103,8 @@ const _handleMessageInConversation = (senderId, text) => {
  * @param {String} senderId
  */
 const _welcomeUser = (senderId) => {
+    logger.info("sender ID is ", senderId);
+    logger.info("from map: ", sessionManager.getSession(senderId));
     fbmBot.sendText({
         id: senderId,
         text: util.format(
