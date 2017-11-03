@@ -23,5 +23,6 @@
       "no-inline-comments": ["off"],
       "no-multiple-empty-lines": ["error", { "max": 1 }],
       "no-ternary": ["off"],
+      "arrow-body-style": ["off"],
     }
   }
