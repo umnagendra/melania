@@ -21,13 +21,10 @@ const SessionManager = {
     createSession: (user) => {
         logger.info("Creating new session for user", user);
         sessionMap.set(user.id, Session(user));
-        logger.info("session now is ", sessionMap);
-        logger.info("getting from session: ", sessionMap.get(user.id));
     },
 
     getSession: (id) => {
-        logger.info("inside getSession, session now is ", sessionMap);
-        sessionMap.get(id);
+        return sessionMap.get(id);
     },
 
     setState: (id, state) => {
