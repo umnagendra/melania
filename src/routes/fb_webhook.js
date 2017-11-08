@@ -301,11 +301,29 @@ fbmBot.on("message", (senderId, message) => {
     }
 });
 
-fbmBot.on("postback", (sender, message, postback, ref) => {
-    logger.debug("Received a postback from sender", sender);
-    logger.debug("Received a postback with message", message);
-    logger.debug("Received a postback with postback", postback);
-    logger.debug("Received a postback with ref", ref);
+// register to `postback` events from facebook messenger
+// this will be invoked for every postback event that is
+// received via Facebook Messenger by any user
+fbmBot.on("postback", (senderId, message, postback, ref) => {
+    logger.debug("Received a postback from sender", postback);
+    switch (postback) {
+    // We have enabled the "get_started" property using
+    // Messenger Profile API. This means, a "Get Started" button
+    // is shown to users the first time they interact with the app
+    // (and not thereafter)
+    case "get_started":
+        // STEP 0: Get user details from Facebook
+        _getUserProfile(senderId).then((sender) => {
+            // STEP 1: Create a new session
+            sessionManager.createSession(sender);
+            // STEP 2: Welcome/greet the user
+            _welcomeUser(senderId);
+        }).catch(err => utils.logErrorWithStackTrace(err));
+        break;
+
+    default:
+        logger.error("Unknown postback event received", postback, message);
+    }
 });
 
 module.exports = fbmBot.router();
