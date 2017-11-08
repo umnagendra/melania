@@ -304,7 +304,7 @@ fbmBot.on("message", (senderId, message) => {
 // register to `postback` events from facebook messenger
 // this will be invoked for every postback event that is
 // received via Facebook Messenger by any user
-fbmBot.on("postback", (senderId, message, postback, ref) => {
+fbmBot.on("postback", (senderId, message, postback) => {
     logger.debug("Received a postback from sender", postback);
     switch (postback) {
     // We have enabled the "get_started" property using
