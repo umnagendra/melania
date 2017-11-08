@@ -301,4 +301,11 @@ fbmBot.on("message", (senderId, message) => {
     }
 });
 
+fbmBot.on("postback", (sender, message, postback, ref) => {
+    logger.debug("Received a postback from sender", sender);
+    logger.debug("Received a postback with message", message);
+    logger.debug("Received a postback with postback", postback);
+    logger.debug("Received a postback with ref", ref);
+});
+
 module.exports = fbmBot.router();
