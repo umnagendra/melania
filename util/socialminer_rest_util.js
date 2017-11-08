@@ -11,6 +11,36 @@ const CHAT_URL = "http://%s/ccp/chat";
 const CHAT_EVENTS_QUERY_PARAMS = "?all=false&eventid=";
 const MIME_XML = "application/xml";
 
+// private functions
+
+const _constructChatRequestPayload = (sessionId) => {
+    const feedRefURL = util.format(
+        CHAT_FEED_REFURL,
+        process.env.SOCIALMINER_HOST, process.env.SOCIALMINER_CHAT_FEED_ID
+    );
+    const thisSession = sessionManager.getSession(sessionId);
+
+    return `${"<SocialContact>" +
+                "<feedRefURL>"}${feedRefURL}</feedRefURL>` +
+                `<author>${thisSession.user.name}</author>` +
+                `<title>${CHAT_TITLE}</title>` +
+                "<extensionFields>" +
+                    "<extensionField>" +
+                        "<name>ccxqueuetag</name>" +
+                        `<value>${CCX_QUEUETAG_PREFIX}${process.env.CCX_QUEUE_ID}</value>` +
+                    "</extensionField>" +
+                    "<extensionField>" +
+                        "<name>h_Name</name>" +
+                        `<value>${thisSession.user.name}</value>` +
+                    "</extensionField>" +
+                "</extensionFields>" +
+            "</SocialContact>";
+};
+
+const _constructMessagePayload = text => `${"<Message>" +
+                "<body>"}${text}</body>` +
+           "</Message>";
+
 const SocialMinerRESTClient = {
     postChatRequest: (sessionId) => {
         logger.info(
@@ -67,33 +97,3 @@ const SocialMinerRESTClient = {
 };
 
 module.exports = SocialMinerRESTClient;
-
-// private functions
-
-const _constructChatRequestPayload = (sessionId) => {
-    const feedRefURL = util.format(
-        CHAT_FEED_REFURL,
-        process.env.SOCIALMINER_HOST, process.env.SOCIALMINER_CHAT_FEED_ID
-    );
-    const thisSession = sessionManager.getSession(sessionId);
-
-    return `${"<SocialContact>" +
-                "<feedRefURL>"}${feedRefURL}</feedRefURL>` +
-                `<author>${thisSession.user.name}</author>` +
-                `<title>${CHAT_TITLE}</title>` +
-                "<extensionFields>" +
-                    "<extensionField>" +
-                        "<name>ccxqueuetag</name>" +
-                        `<value>${CCX_QUEUETAG_PREFIX}${process.env.CCX_QUEUE_ID}</value>` +
-                    "</extensionField>" +
-                    "<extensionField>" +
-                        "<name>h_Name</name>" +
-                        `<value>${thisSession.user.name}</value>` +
-                    "</extensionField>" +
-                "</extensionFields>" +
-            "</SocialContact>";
-};
-
-const _constructMessagePayload = text => `${"<Message>" +
-                "<body>"}${text}</body>` +
-           "</Message>";
