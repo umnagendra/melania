@@ -2,8 +2,8 @@
 const chai = require("chai");
 const sinon = require("sinon");
 const sinonChai = require("sinon-chai");
-const utils = require("../../util/utils");
-const logger = require("../../util/logger");
+const utils = require("../../src/util/utils");
+const logger = require("../../src/util/logger");
 
 const { expect } = chai;
 chai.use(sinonChai);
