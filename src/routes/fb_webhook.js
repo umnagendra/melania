@@ -154,7 +154,6 @@ const _decodeAndSendMessageFromSocialMiner = (senderId, text, eventId) => {
  * @param {String} typingStatus (from SocialMiner)
  */
 const _sendTypingSenderAction = (senderId, typingStatus) => {
-    logger.debug("_sendTypingSenderAction: SenderID = [%s], TypingStatus = [%s]");
     const thisAction = typingStatus === "composing" ?
         Botly.CONST.ACTION_TYPES.TYPING_ON : Botly.CONST.ACTION_TYPES.TYPING_OFF;
 
@@ -188,13 +187,13 @@ const _processTypingFromSocialMiner = (senderId, typingEvents) => {
         // I'm not sorting the array by ascending order of
         // event IDs, because I've seen it always appears sorted
         // by default. Not 100% sure, though.
-        _sendTypingSenderAction(_.last(typingEvents).status);
+        _sendTypingSenderAction(senderId, _.last(typingEvents).status);
         // update the latest event ID
         sessionManager.setLatestEventId(senderId, parseInt(_.last(typingEvents).id, 10));
     } else {
         // send this typing event to FBM since this is
         // the only typing event
-        _sendTypingSenderAction(typingEvents.status);
+        _sendTypingSenderAction(senderId, typingEvents.status);
         // update the latest event ID
         sessionManager.setLatestEventId(senderId, parseInt(typingEvents.id, 10));
     }
