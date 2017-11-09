@@ -147,6 +147,20 @@ const _decodeAndSendMessageFromSocialMiner = (senderId, text, eventId) => {
 };
 
 /**
+ * Sends a "Sender Action" to FBM using the SEND API
+ * for typing events
+ *
+ * @param {String} senderId
+ * @param {String} typingStatus (from SocialMiner)
+ */
+const _sendTypingSenderAction = (senderId, typingStatus) => {
+    const thisAction = typingStatus === "composing" ?
+        Botly.CONST.ACTION_TYPES.TYPING_ON : Botly.CONST.ACTION_TYPES.TYPING_OFF;
+
+    fbmBot.sendAction({ id: senderId, action: thisAction });
+};
+
+/**
  * Handles `MessageEvent` from SocialMiner
  *
  * @param {String} senderId
@@ -157,6 +171,31 @@ const _processMessagesFromSocialMiner = (senderId, messages) => {
         _.each(messages, message => _decodeAndSendMessageFromSocialMiner(senderId, message.body, message.id));
     } else {
         _decodeAndSendMessageFromSocialMiner(senderId, messages.body, messages.id);
+    }
+};
+
+/**
+ * Handles `TypingEvent` from SocialMiner
+ *
+ * @param {String} senderId
+ * @param {*} typingEvents
+ */
+const _processTypingFromSocialMiner = (senderId, typingEvents) => {
+    if (_.isArray(typingEvents)) {
+        // send the last (latest) typing event to FBM
+        // since that is all that matters
+        // I'm not sorting the array by ascending order of
+        // event IDs, because I've seen it always appears sorted
+        // by default. Not 100% sure, though.
+        _sendTypingSenderAction(_.last(typingEvents).status);
+        // update the latest event ID
+        sessionManager.setLatestEventId(senderId, parseInt(_.last(typingEvents).id, 10));
+    } else {
+        // send this typing event to FBM since this is
+        // the only typing event
+        _sendTypingSenderAction(typingEvents.status);
+        // update the latest event ID
+        sessionManager.setLatestEventId(senderId, parseInt(typingEvents.id, 10));
     }
 };
 
@@ -173,6 +212,9 @@ const _processChatEventsFromSocialMiner = (senderId, chatEvents) => {
     }
     if (chatEvents.MessageEvent) {
         _processMessagesFromSocialMiner(senderId, chatEvents.MessageEvent);
+    }
+    if (chatEvents.TypingEvent) {
+        _processTypingFromSocialMiner(senderId, chatEvents.TypingEvent);
     }
 };
 
