@@ -154,10 +154,11 @@ const _decodeAndSendMessageFromSocialMiner = (senderId, text, eventId) => {
  * @param {String} typingStatus (from SocialMiner)
  */
 const _sendTypingSenderAction = (senderId, typingStatus) => {
+    logger.debug("_sendTypingSenderAction: SenderID = [%s], TypingStatus = [%s]");
     const thisAction = typingStatus === "composing" ?
         Botly.CONST.ACTION_TYPES.TYPING_ON : Botly.CONST.ACTION_TYPES.TYPING_OFF;
 
-    fbmBot.sendAction({ id: senderId, action: thisAction });
+    fbmBot.sendAction({ id: senderId, action: thisAction }, (err, data) => logger.debug("Typing action sent to FBM", err, data));
 };
 
 /**
